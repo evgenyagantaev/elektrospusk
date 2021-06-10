@@ -1,0 +1,19 @@
+CC=gcc
+CFLAGS=-c -g
+LDFLAGS=
+LIBS=-lbcm2835 -lncurses -lpthread -lm
+SOURCES=$(main.c init.c  step_driver.c udp_thread.c command_thread.c)
+INCLUDES=$(main.h step_driver.h)
+OBJECTS=$(SOURCES:.c=.o)
+TARGET=elspusk_kamera
+
+all: $(SOURCES) $(INCLUDES) $(TARGET)
+
+$(TARGET): $(OBJECTS)
+	$(CC) $(LDFLAGS) $(OBJECTS) -o $@ $(LIBS)
+
+.c .o:
+	$(CC) $(CFLAGS) $< -o $@
+
+clean:
+	rm -rf *.o $(TARGET)
