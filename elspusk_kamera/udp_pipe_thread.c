@@ -1,6 +1,7 @@
 #include "main.h"
 
 #define BUFFER_LENGTH 1024
+#define PORT 61312
 
 void *udp_pipe_thread(void *param)
 {
@@ -22,6 +23,7 @@ void *udp_pipe_thread(void *param)
 	int panel_socket;
 	int so_broadcast = 1;
 	struct sockaddr_in panel_addr;
+	struct sockaddr_in server_addr;
 
 	i = 1;
 	panel_socket = socket(AF_INET, SOCK_DGRAM, 0);
@@ -35,13 +37,18 @@ void *udp_pipe_thread(void *param)
 	//setsockopt(panel_socket, SOL_SOCKET, SO_BROADCAST, &so_broadcast, sizeof so_broadcast);
 
 	panel_addr.sin_family = AF_INET;
-	//panel_addr.sin_port = htons(61312);
-	panel_addr.sin_port = 61312;
+	panel_addr.sin_port = htons(PORT);
+	//panel_addr.sin_port = PORT;
 	panel_addr.sin_addr.s_addr = inet_addr("192.168.2.127");
+	//*****
+	server_addr.sin_family = AF_INET;
+	server_addr.sin_port = htons(PORT);
+	//server_addr.sin_addr.s_addr = inet_addr("192.168.1.121");
+	server_addr.sin_addr.s_addr = htonl(INADDR_ANY);
 
-	printf("\r\npanel address %s\r\n", inet_ntoa(panel_addr.sin_addr));
+	printf("\r\npanel address %s port: %d\r\n", inet_ntoa(panel_addr.sin_addr), PORT);
 
-	bind(panel_socket, (struct sockaddr *)&panel_addr, sizeof(panel_addr));
+	bind(panel_socket, (struct sockaddr *)&server_addr, sizeof(panel_addr));
 	address_length = sizeof(panel_addr);
 
 	i = 0;
@@ -53,8 +60,8 @@ void *udp_pipe_thread(void *param)
 	{
 
 		// receive data from udp socket ***************************************************
-		//datagramm_length = recvfrom(panel_socket, buffer, 1024, 0, (struct sockaddr *)&panel_addr, &address_length);
-		//sendto(panel_socket, buffer, datagramm_length, 0, (struct sockaddr *)&panel_addr, sizeof(panel_addr));
+		datagramm_length = recvfrom(panel_socket, buffer, 1024, 0, (struct sockaddr *)&panel_addr, &address_length);
+		sendto(panel_socket, buffer, datagramm_length, 0, (struct sockaddr *)&panel_addr, sizeof(panel_addr));
 		printf("received %d ", datagramm_length);
 		printf("from address %s ", inet_ntoa(panel_addr.sin_addr));
 		printf("from port %d\r\n", panel_addr.sin_port);
@@ -73,10 +80,10 @@ void *udp_pipe_thread(void *param)
 
 
 		// send data via udp socket ***************************************************
-		sendto(panel_socket, buffer, datagramm_length, 0, (struct sockaddr *)&panel_addr, sizeof(panel_addr));
+		//sendto(panel_socket, buffer, datagramm_length, 0, (struct sockaddr *)&panel_addr, sizeof(panel_addr));
 		//*****************************************************************************
 
-		printf("udp thread\r\n ");
+		printf("udp thread ********\r\n ");
 		nanosleep(&sleep_interval, NULL);
 		
 	}

@@ -1,6 +1,7 @@
 #include "main.h"
 #include "step_driver.h"
 #include "init.h"
+#include "mma845_driver.h"
 
 
 int udp_pipe_thread_parameter = 0;
@@ -23,8 +24,8 @@ int main(int argc, char *argv)
 
 
 	struct timespec sleep_interval;
-	sleep_interval.tv_sec = 1;
-	sleep_interval.tv_nsec = 0;	// 
+	sleep_interval.tv_sec = 0;
+	sleep_interval.tv_nsec = 100000000;	// 
 
 
 	struct timespec sleep_interval_short;
@@ -69,9 +70,18 @@ int main(int argc, char *argv)
 		int counter = 0;
 		int direction = 0;
 
+		int8_t X, Y, Z;
+
 		while(1)
 		{
+		
+			read_xyz(&X, &Y, &Z);
 
+			//printf("%+05d   %+05d   %+05d\r\n", X, Y, Z);
+
+			nanosleep(&sleep_interval, NULL);
+
+			/*
 			if(direction == 0) //clockwise
 			{
 				step_clockwise();
@@ -94,6 +104,7 @@ int main(int argc, char *argv)
 					direction = 0;
 				}
 			}
+			//*/
 
 			//step_counterclockwise();
 
