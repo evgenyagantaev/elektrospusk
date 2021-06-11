@@ -3,15 +3,10 @@
 
 uint8_t read_register(uint8_t register_address)
 {
+	uint8_t addr = register_address;
 	uint8_t buf;
 
-	buf = WRITE_COMMAND;
-	bcm2835_i2c_write((const char *)(&buf), 1);
-	buf = register_address;
-	bcm2835_i2c_write((const char *)(&buf), 1);
-	buf = READ_COMMAND;
-	bcm2835_i2c_write((const char *)(&buf), 1);
-	bcm2835_i2c_read((char *)(&buf), 1);
+	bcm2835_i2c_read_register_rs((char*)(&addr), (char*)(&buf), 1);
 
 	return buf;
 }
@@ -19,14 +14,11 @@ uint8_t read_register(uint8_t register_address)
 
 void write_register(uint8_t register_address, uint8_t data)
 {
-	uint8_t buf;
+	uint8_t buf[2];
+	buf[0] = register_address;
+	buf[1] = data;
 
-	buf = WRITE_COMMAND;
-	bcm2835_i2c_write((const char *)(&buf), 1);
-	buf = register_address;
-	bcm2835_i2c_write((const char *)(&buf), 1);
-	buf = data;
-	bcm2835_i2c_write((const char *)(&buf), 1);
+	bcm2835_i2c_write((const char *)(buf), 2);
 	
 }
 

@@ -24,7 +24,7 @@ void init(void)
 
 	bcm2835_i2c_begin();                //Start I2C operations.
     bcm2835_i2c_setSlaveAddress(0x1c);  //I2C address of accelerometer
-    bcm2835_i2c_set_baudrate(400);      // baudrate	
+    bcm2835_i2c_set_baudrate(125000);      // baudrate	
 
 
 	// configure accelerometer ****************************

@@ -24,8 +24,8 @@ int main(int argc, char *argv)
 
 
 	struct timespec sleep_interval;
-	sleep_interval.tv_sec = 0;
-	sleep_interval.tv_nsec = 100000000;	// 
+	sleep_interval.tv_sec = 1;
+	sleep_interval.tv_nsec = 0;	// 
 
 
 	struct timespec sleep_interval_short;
@@ -60,7 +60,7 @@ int main(int argc, char *argv)
 		init();
 
 		// start the udp pipe thread
-		pthread_create(&udp_command_pipe_thread, NULL, udp_pipe_thread, (void *)(&udp_pipe_thread_parameter));
+		//pthread_create(&udp_command_pipe_thread, NULL, udp_pipe_thread, (void *)(&udp_pipe_thread_parameter));
 
 		//printf("getchar in");
 		//getchar();
@@ -71,13 +71,20 @@ int main(int argc, char *argv)
 		int direction = 0;
 
 		int8_t X, Y, Z;
+		uint8_t buf[2];
+		buf[0] = 0x14;
 
 		while(1)
 		{
 		
 			read_xyz(&X, &Y, &Z);
-
-			//printf("%+05d   %+05d   %+05d\r\n", X, Y, Z);
+			//write_register(CONTROL_REG1, CONTROL_REG1_CONF);
+			//bcm2835_i2c_write((const char*)(&buf[0]), 1);
+			//bcm2835_i2c_read((char*)(&buf[1]), 1);
+			//bcm2835_i2c_read_register_rs((char*)(&buf[0]), (char*)(&buf[1]), 1);
+			//buf[1] = read_register(buf[0]);
+			//printf("%x\r\n", buf[1]);
+			printf("%+05d   %+05d   %+05d\r\n", X, Y, Z);
 
 			nanosleep(&sleep_interval, NULL);
 
