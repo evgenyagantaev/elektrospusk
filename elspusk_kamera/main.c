@@ -5,10 +5,12 @@
 
 
 int udp_pipe_thread_parameter = 0;
+int accelerometer_thread_parameter = 0;
 
 // functions ************************************************************
 
 void *udp_pipe_thread(void *param);
+void *accelerometer_thread(void *param);
 
 // end functions ********************************************************
 
@@ -37,6 +39,8 @@ int main(int argc, char *argv)
 	int keyboard_thread_id;
 	pthread_t udp_command_pipe_thread;
 	int udp_thread_id;
+	pthread_t accelerometer_registration_thread;
+	int accelerometer_thread_id;
 
 
 // local variables
@@ -61,6 +65,8 @@ int main(int argc, char *argv)
 
 		// start the udp pipe thread
 		//pthread_create(&udp_command_pipe_thread, NULL, udp_pipe_thread, (void *)(&udp_pipe_thread_parameter));
+		// start the accelerometer thread
+		//pthread_create(&accelerometer_registration_thread, NULL, accelerometer_thread, (void *)(&accelerometer_thread_parameter));
 
 		//printf("getchar in");
 		//getchar();
@@ -86,7 +92,7 @@ int main(int argc, char *argv)
 			//printf("%x\r\n", buf[1]);
 			printf("%+05d   %+05d   %+05d\r\n", X, Y, Z);
 
-			nanosleep(&sleep_interval, NULL);
+			//nanosleep(&sleep_interval, NULL);
 
 			/*
 			if(direction == 0) //clockwise
