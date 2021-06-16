@@ -1,7 +1,7 @@
 #include "main.h"
 #include "step_driver.h"
 #include "init.h"
-#include "mma845_driver.h"
+//#include "mma845_driver.h"
 
 
 int udp_pipe_thread_parameter = 0;
@@ -13,6 +13,14 @@ void *udp_pipe_thread(void *param);
 void *accelerometer_thread(void *param);
 
 // end functions ********************************************************
+
+
+// global variables *****************************************************
+
+int gun_shot_flag = 0;
+
+// end global variables *************************************************
+
 
 
 //*****************************
@@ -66,7 +74,7 @@ int main(int argc, char *argv)
 		// start the udp pipe thread
 		//pthread_create(&udp_command_pipe_thread, NULL, udp_pipe_thread, (void *)(&udp_pipe_thread_parameter));
 		// start the accelerometer thread
-		//pthread_create(&accelerometer_registration_thread, NULL, accelerometer_thread, (void *)(&accelerometer_thread_parameter));
+		pthread_create(&accelerometer_registration_thread, NULL, accelerometer_thread, (void *)(&accelerometer_thread_parameter));
 
 		//printf("getchar in");
 		//getchar();
@@ -76,23 +84,22 @@ int main(int argc, char *argv)
 		int counter = 0;
 		int direction = 0;
 
-		int8_t X, Y, Z;
 		uint8_t buf[2];
 		buf[0] = 0x14;
 
 		while(1)
 		{
 		
-			read_xyz(&X, &Y, &Z);
+			//read_xyz(&X, &Y, &Z);
 			//write_register(CONTROL_REG1, CONTROL_REG1_CONF);
 			//bcm2835_i2c_write((const char*)(&buf[0]), 1);
 			//bcm2835_i2c_read((char*)(&buf[1]), 1);
 			//bcm2835_i2c_read_register_rs((char*)(&buf[0]), (char*)(&buf[1]), 1);
 			//buf[1] = read_register(buf[0]);
 			//printf("%x\r\n", buf[1]);
-			printf("%+05d   %+05d   %+05d\r\n", X, Y, Z);
+			//printf("%+05d   %+05d   %+05d\r\n", X, Y, Z);
 
-			//nanosleep(&sleep_interval, NULL);
+			nanosleep(&sleep_interval, NULL);
 
 			/*
 			if(direction == 0) //clockwise

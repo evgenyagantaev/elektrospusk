@@ -1,13 +1,13 @@
 TARGET=elspusk_kamera
 LIBS=-lbcm2835 -lncurses -lpthread -lm
-OBJECTS=main.o init.o udp_pipe_thread.o step_driver.o command_thread.o mma845_driver.o
+OBJECTS=main.o init.o udp_pipe_thread.o step_driver.o command_thread.o mma845_driver.o accelerometer_thread.o
 
 all: $(TARGET)
 
 $(TARGET): $(OBJECTS)
 	gcc $(OBJECTS) -o $(TARGET) $(LIBS)
 
-main.o: main.c main.h
+main.o: main.c main.h step_driver.h init.h
 	gcc -c -g main.c -o main.o
 
 init.o: init.c init.h main.h step_driver.h mma845_driver.h
@@ -24,6 +24,9 @@ command_thread.o: command_thread.c main.h
 
 mma845_driver.o: mma845_driver.c mma845_driver.h main.h
 	gcc -c -g mma845_driver.c -o mma845_driver.o	
+
+accelerometer_thread.o: accelerometer_thread.c mma845_driver.h main.h
+	gcc -c -g accelerometer_thread.c -o accelerometer_thread.o	
 
 clean:
 	rm -rf *.o $(TARGET)
