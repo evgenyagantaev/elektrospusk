@@ -2,6 +2,11 @@
 #include "mma845_driver.h"
 #include "step_driver.h"
 
+https://www.youtube.com/watch?v=g_utqeQALVE
+
+
+
+
 void init(void)
 {
 	// Inicializiruyem GPIO
@@ -12,12 +17,8 @@ void init(void)
 	bcm2835_gpio_fsel(ENB_PIN, BCM2835_GPIO_FSEL_OUTP);         	
 	bcm2835_gpio_write(ENB_PIN, LOW);                           	
                                                                 
-	bcm2835_gpio_fsel(YELLOW_BUTTON, BCM2835_GPIO_FSEL_INPT);   	
-	bcm2835_gpio_set_pud(YELLOW_BUTTON, 2);                     	
-	bcm2835_gpio_fsel(GREEN_BUTTON, BCM2835_GPIO_FSEL_INPT);    	
-	bcm2835_gpio_set_pud(GREEN_BUTTON, 2);                      	
-	bcm2835_gpio_fsel(BLUE_BUTTON, BCM2835_GPIO_FSEL_INPT);     	
-	bcm2835_gpio_set_pud(BLUE_BUTTON, 2);                       	
+	bcm2835_gpio_fsel(PARK_BUTTON, BCM2835_GPIO_FSEL_INPT);   	
+	bcm2835_gpio_set_pud(YELLOW_BUTTON, bcm2835PUDControl.BCM2835_GPIO_PUD_UP);                     	
 	                                                            	
 	bcm2835_gpio_write(ENB_PIN, 0);                             	  	     
 

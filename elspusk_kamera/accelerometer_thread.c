@@ -1,7 +1,7 @@
 #include "main.h"
 #include "mma845_driver.h"
 
-#define ACC_THRESHOLD 113
+#define ACC_THRESHOLD 97
 
 extern int gun_shot_flag;
 
@@ -11,7 +11,7 @@ void *accelerometer_thread(void *param)
 
 	struct timespec sleep_interval_short;
 	sleep_interval_short.tv_sec = 0;
-	sleep_interval_short.tv_nsec = 10000000;	// 10 ms 
+	sleep_interval_short.tv_nsec = 5000000;	// 15 ms 
 	
 	while(1)
 	{                                                                           	

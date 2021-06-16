@@ -4,22 +4,101 @@
 //#include "mma845_driver.h"
 
 
+// global variables *****************************************************
+
 int udp_pipe_thread_parameter = 0;
 int accelerometer_thread_parameter = 0;
+
+int gun_shot_flag = 0;
+
+// end global variables *************************************************
 
 // functions ************************************************************
 
 void *udp_pipe_thread(void *param);
 void *accelerometer_thread(void *param);
 
+
+void one_shot(void)
+{
+	int i;
+
+	int step_counter = 0;
+	
+	struct timespec sleep_interval_short;
+	sleep_interval_short.tv_sec = 0;
+	sleep_interval_short.tv_nsec = 10000000;	// 
+	
+	printf("one shot started\r\n");
+	gun_shot_flag = 0;
+	while((step_counter < 150) && (gun_shot_flag == 0))
+	{
+		step_counterclockwise();
+		step_counter++;
+		nanosleep(&sleep_interval_short, NULL);
+	}
+
+	if(gun_shot_flag == 1)
+		gun_shot_flag = 0;
+
+	for(i=0; i<step_counter; i++)
+		step_clockwise();
+	
+	printf("one shot finished *****\r\n");
+}
+
+
+int bunch_shot(int shots_number)
+{
+	int i;
+	int real_number_of_shots = 0;
+	int step_counter = 0;
+	
+	struct timespec sleep_interval_short;
+	sleep_interval_short.tv_sec = 0;
+	sleep_interval_short.tv_nsec = 5000000;	// 
+	
+	printf("bunch shot %d started\r\n", shots_number);
+	gun_shot_flag = 0;
+	while((step_counter < 150) && (gun_shot_flag == 0))
+	{
+		step_counterclockwise();
+		step_counter++;
+		nanosleep(&sleep_interval_short, NULL);
+	}
+
+	if(gun_shot_flag == 1)
+	{
+		gun_shot_flag = 0;
+		real_number_of_shots++;
+		for(i=0; i<(shots_number-1); i++)
+		{
+			// wait for next shot
+			int counter = 0;
+			while((counter < 200) && (gun_shot_flag == 0))
+			{
+				counter++;
+				nanosleep(&sleep_interval_short, NULL);
+			}
+			if(gun_shot_flag == 1)
+			{
+				gun_shot_flag = 0;
+				real_number_of_shots++;
+			}
+		}
+
+	}
+
+	for(i=0; i<step_counter; i++)
+		step_clockwise();
+
+	printf("real shots - %d\r\n", real_number_of_shots);
+	printf("bunch shot finished *****\r\n");
+}
+
 // end functions ********************************************************
 
 
-// global variables *****************************************************
-
-int gun_shot_flag = 0;
-
-// end global variables *************************************************
 
 
 
@@ -34,7 +113,7 @@ int main(int argc, char *argv)
 
 
 	struct timespec sleep_interval;
-	sleep_interval.tv_sec = 1;
+	sleep_interval.tv_sec = 7;
 	sleep_interval.tv_nsec = 0;	// 
 
 
@@ -98,7 +177,7 @@ int main(int argc, char *argv)
 			//buf[1] = read_register(buf[0]);
 			//printf("%x\r\n", buf[1]);
 			//printf("%+05d   %+05d   %+05d\r\n", X, Y, Z);
-
+			bunch_shot(7);
 			nanosleep(&sleep_interval, NULL);
 
 			/*

@@ -13,9 +13,7 @@
 #include <string.h>
 
 
-#define YELLOW_BUTTON RPI_BPLUS_GPIO_J8_36
-#define GREEN_BUTTON RPI_BPLUS_GPIO_J8_38
-#define BLUE_BUTTON RPI_BPLUS_GPIO_J8_40
+#define PARK_BUTTON RPI_BPLUS_GPIO_J8_16
 
 
 #endif
