@@ -18,6 +18,33 @@ int gun_shot_flag = 0;
 void *udp_pipe_thread(void *param);
 void *accelerometer_thread(void *param);
 
+void park(void)
+{
+
+	int i;
+
+	int step_counter = 0;
+	
+	struct timespec sleep_interval_short;
+	sleep_interval_short.tv_sec = 0;
+	sleep_interval_short.tv_nsec = 10000000;	// 
+	
+	printf("park started\r\n");
+	
+	while((step_counter < 400) && (bcm2835_gpio_lev(PARK_BUTTON) == 1))
+	{
+		step_clockwise();
+		step_counter++;
+		nanosleep(&sleep_interval_short, NULL);
+	}
+	for(i=0; i<37; i++)
+	{
+		step_counterclockwise();
+		nanosleep(&sleep_interval_short, NULL);
+	}
+	
+	printf("park finished *****\r\n");
+}
 
 void one_shot(void)
 {
@@ -169,81 +196,8 @@ int main(int argc, char *argv)
 		while(1)
 		{
 		
-			//read_xyz(&X, &Y, &Z);
-			//write_register(CONTROL_REG1, CONTROL_REG1_CONF);
-			//bcm2835_i2c_write((const char*)(&buf[0]), 1);
-			//bcm2835_i2c_read((char*)(&buf[1]), 1);
-			//bcm2835_i2c_read_register_rs((char*)(&buf[0]), (char*)(&buf[1]), 1);
-			//buf[1] = read_register(buf[0]);
-			//printf("%x\r\n", buf[1]);
-			//printf("%+05d   %+05d   %+05d\r\n", X, Y, Z);
-			bunch_shot(7);
+			park();
 			nanosleep(&sleep_interval, NULL);
-
-			/*
-			if(direction == 0) //clockwise
-			{
-				step_clockwise();
-				counter++;
-				if(counter >= 400)
-				{
-					//nanosleep(&sleep_interval, NULL);
-					counter = 0;
-					direction = 1;
-				}
-			}
-			else  // counterclockwise
-			{
-				step_counterclockwise();
-				counter++;
-				if(counter >= 400)
-				{
-					nanosleep(&sleep_interval, NULL);
-					counter = 0;
-					direction = 0;
-				}
-			}
-			//*/
-
-			//step_counterclockwise();
-
-			/*
-			if(!bcm2835_gpio_lev(GREEN_BUTTON))
-			{
-				step_clockwise();
-				nanosleep(&sleep_interval, NULL);
-			}
-			else if(!bcm2835_gpio_lev(BLUE_BUTTON))
-			{
-				step_counterclockwise();
-				nanosleep(&sleep_interval, NULL);
-			}
-			else if(!bcm2835_gpio_lev(YELLOW_BUTTON))
-			{
-				phase_counter = 0;
-
-				for(i=0; i<100; i++)
-				{
-					step_counterclockwise();
-					nanosleep(&sleep_interval, NULL);
-				}
-				while(!bcm2835_gpio_lev(YELLOW_BUTTON))
-				{
-					nanosleep(&sleep_interval_short, NULL);
-				}
-				for(i=0; i<100; i++)
-				{
-					step_clockwise();
-					nanosleep(&sleep_interval, NULL);
-				}
-
-			}
-			else 
-			{
-				holding();
-				nanosleep(&sleep_interval_short, NULL);
-			}
-			//*/
 
 		}
 
