@@ -1,7 +1,13 @@
 #include "main.h"
 
 #define BUFFER_LENGTH 1024
-#define PORT 61312
+#define PORT 61313
+
+extern uint8_t global_command_buffer[];
+extern int new_command_received_flag;
+
+int panel_socket;
+struct sockaddr_in panel_addr;
 
 void *udp_pipe_thread(void *param)
 {
@@ -68,6 +74,9 @@ void *udp_pipe_thread(void *param)
 		if(datagramm_length < BUFFER_LENGTH)
 		{
 			buffer[datagramm_length] = 0;
+			// copy datagramm into global buffer
+			strncpy(global_command_buffer, buffer, 64);
+			new_command_received_flag = 1;
 		}
 		else
 		{
@@ -80,7 +89,7 @@ void *udp_pipe_thread(void *param)
 
 
 		// send data via udp socket ***************************************************
-		//sendto(panel_socket, buffer, datagramm_length, 0, (struct sockaddr *)&panel_addr, sizeof(panel_addr));
+		sendto(panel_socket, buffer, datagramm_length, 0, (struct sockaddr *)&panel_addr, sizeof(panel_addr));
 		//*****************************************************************************
 
 		printf("udp thread ********\r\n ");

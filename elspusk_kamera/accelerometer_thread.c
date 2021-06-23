@@ -4,6 +4,7 @@
 #define ACC_THRESHOLD 97
 
 extern int gun_shot_flag;
+extern int shot_counter;
 
 void *accelerometer_thread(void *param)
 {
@@ -24,6 +25,7 @@ void *accelerometer_thread(void *param)
 		if(accel_summ > ACC_THRESHOLD)
 		{
 			gun_shot_flag = 1;
+			shot_counter++;
 			printf("SHOT\r\n");                           	
 			nanosleep(&sleep_interval_short, NULL);
 		}
