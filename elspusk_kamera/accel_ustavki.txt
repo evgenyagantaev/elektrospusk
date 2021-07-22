@@ -1,0 +1,5 @@
+stechkin    acc 165 period  100
+yarygin     acc 195 
+ak74        acc 350 period  120
+akm         acc 475 period  130
+svd         acc 650

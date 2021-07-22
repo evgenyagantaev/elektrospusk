@@ -1,7 +1,12 @@
 #include "main.h"
 
 #define BUFFER_LENGTH 1024
-#define PORT 61313
+#define PORT 61312
+
+extern pthread_mutex_t mutex_udp;
+extern pthread_mutex_t mutex_uart;
+//pthread_mutex_lock(&mutex_udp);
+//pthread_mutex_unlock(&mutex_udp);
 
 extern uint8_t global_command_buffer[];
 extern int new_command_received_flag;
@@ -26,16 +31,18 @@ void *udp_pipe_thread(void *param)
 	int datagramm_length;
 	int address_length;
 
-	int panel_socket;
+	//int panel_socket;
 	int so_broadcast = 1;
-	struct sockaddr_in panel_addr;
+	//struct sockaddr_in panel_addr;
 	struct sockaddr_in server_addr;
 
 	i = 1;
 	panel_socket = socket(AF_INET, SOCK_DGRAM, 0);
 	if(panel_socket < 0)
 	{
+		pthread_mutex_lock(&mutex_uart);
 		printf("\r\npanel_socket failure ******************\r\n");
+		pthread_mutex_unlock(&mutex_uart);
 		*((int *)param) = 1; 
 		return (void *)param;
 	}
@@ -52,7 +59,9 @@ void *udp_pipe_thread(void *param)
 	//server_addr.sin_addr.s_addr = inet_addr("192.168.1.121");
 	server_addr.sin_addr.s_addr = htonl(INADDR_ANY);
 
+	pthread_mutex_lock(&mutex_uart);
 	printf("\r\npanel address %s port: %d\r\n", inet_ntoa(panel_addr.sin_addr), PORT);
+	pthread_mutex_unlock(&mutex_uart);
 
 	bind(panel_socket, (struct sockaddr *)&server_addr, sizeof(panel_addr));
 	address_length = sizeof(panel_addr);
@@ -67,10 +76,12 @@ void *udp_pipe_thread(void *param)
 
 		// receive data from udp socket ***************************************************
 		datagramm_length = recvfrom(panel_socket, buffer, 1024, 0, (struct sockaddr *)&panel_addr, &address_length);
+		pthread_mutex_lock(&mutex_udp);
 		sendto(panel_socket, buffer, datagramm_length, 0, (struct sockaddr *)&panel_addr, sizeof(panel_addr));
-		printf("received %d ", datagramm_length);
-		printf("from address %s ", inet_ntoa(panel_addr.sin_addr));
-		printf("from port %d\r\n", panel_addr.sin_port);
+		pthread_mutex_unlock(&mutex_udp);
+		//printf("received %d ", datagramm_length);
+		//printf("from address %s ", inet_ntoa(panel_addr.sin_addr));
+		//printf("from port %d\r\n", panel_addr.sin_port);
 		if(datagramm_length < BUFFER_LENGTH)
 		{
 			buffer[datagramm_length] = 0;
@@ -82,18 +93,20 @@ void *udp_pipe_thread(void *param)
 		{
 			buffer[BUFFER_LENGTH - 1] = 0;
 		}
-		printf("%s\r\n", buffer);
+		pthread_mutex_lock(&mutex_uart);
+		printf("%s\r\n", global_command_buffer);
+		pthread_mutex_unlock(&mutex_uart);
 
 		//*****************************************************************************
 
 
 
 		// send data via udp socket ***************************************************
-		sendto(panel_socket, buffer, datagramm_length, 0, (struct sockaddr *)&panel_addr, sizeof(panel_addr));
+		//sendto(panel_socket, buffer, datagramm_length, 0, (struct sockaddr *)&panel_addr, sizeof(panel_addr));
 		//*****************************************************************************
 
-		printf("udp thread ********\r\n ");
-		nanosleep(&sleep_interval, NULL);
+		//printf("udp thread ********\r\n ");
+		//nanosleep(&sleep_interval, NULL);
 		
 	}
 }

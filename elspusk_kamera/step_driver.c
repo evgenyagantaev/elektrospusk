@@ -16,13 +16,13 @@ void step(void)
 
 void step_clockwise(void)
 {
-	bcm2835_gpio_write(DIR_PIN, 0);
+	bcm2835_gpio_write(DIR_PIN, 1);
 	step();
 }
 
 void step_counterclockwise(void)
 {
-	bcm2835_gpio_write(DIR_PIN, 1);
+	bcm2835_gpio_write(DIR_PIN, 0);
 	step();
 }
 

@@ -7,6 +7,11 @@
 
 void init(void)
 {
+	struct timespec sleep_interval;
+	sleep_interval.tv_sec = 2;
+	sleep_interval.tv_nsec = 0;	// 
+
+
 	// Inicializiruyem GPIO
 	bcm2835_gpio_fsel(STEP_PIN, BCM2835_GPIO_FSEL_OUTP);        	
 	bcm2835_gpio_write(STEP_PIN, LOW);                          	
@@ -34,8 +39,17 @@ void init(void)
 
 	// konfigurirovanie poroga freefall
 
+	// perevod v standby rezhim
+	write_register(CONTROL_REG1, 0x00);
+	printf("acc standby\r\n");
+	nanosleep(&sleep_interval, NULL);
+	// 8g range 
+	write_register(CONFIG_REG1, 0x02);
+	printf("acc 8g range set\r\n");
+	nanosleep(&sleep_interval, NULL);
 	// perevod v aktivnyi rezhim
 	write_register(CONTROL_REG1, CONTROL_REG1_CONF);
+	printf("acc configure finished\r\n");
 
 
 

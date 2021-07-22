@@ -4,6 +4,7 @@
 //#include "mma845_driver.h"
 
 
+
 // global variables *****************************************************
 
 int udp_pipe_thread_parameter = 0;
@@ -16,6 +17,14 @@ int command_thread_parameter = 0;
 int gun_shot_flag = 0;
 int shot_counter = 0;
 
+// 1 - stechkin   2 - yarygin   3 - ak74   4 - akm   5 - svd
+int type_of_weapon = 3;   // ak74 (default; power on reset)
+
+pthread_mutex_t mutex_udp;
+pthread_mutex_t mutex_uart;
+//pthread_mutex_lock(&mutex_udp);
+//pthread_mutex_unlock(&mutex_udp);
+
 // end global variables *************************************************
 
 // functions ************************************************************
@@ -24,6 +33,8 @@ void *udp_pipe_thread(void *param);
 void *accelerometer_thread(void *param);
 void *command_interpreter_thread(void *param);
 
+void park(void);
+void one_shot(void);
 
 // end functions ********************************************************
 
@@ -40,6 +51,16 @@ void *command_interpreter_thread(void *param);
 int main(int argc, char *argv)
 {
 
+	if (pthread_mutex_init(&mutex_udp, NULL) != 0)
+    {
+        printf("\n mutex udp init failed\n");
+        return 1;
+    }
+	if (pthread_mutex_init(&mutex_uart, NULL) != 0)
+    {
+        printf("\n mutex uart init failed\n");
+        return 1;
+    }
 
 	struct timespec sleep_interval;
 	sleep_interval.tv_sec = 7;
@@ -102,6 +123,7 @@ int main(int argc, char *argv)
 		while(1)
 		{
 		
+			//one_shot();
 			//park();
 			nanosleep(&sleep_interval, NULL);
 

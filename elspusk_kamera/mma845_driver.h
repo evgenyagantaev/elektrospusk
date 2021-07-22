@@ -8,6 +8,9 @@
 
 #define CONTROL_REG1 0x2a
 #define CONTROL_REG1_CONF 0x03 // fast read, active mod
+#define CONFIG_REG1 0x0e
+#define CONFIG_REG1_CONF 0x01 // range 4g
+
 
 #define MSB_X_REG 0x01
 #define MSB_Y_REG 0x03
